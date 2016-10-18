@@ -1,0 +1,90 @@
+admin:
+    back-office : Back-Office Quintess
+    bo : Back-Office
+    close: Fermer
+    title: Administration
+    header:
+        siteChange:
+            placeholder: Sélectionner un site
+    parameters:
+        action:
+            parameters: Paramétrer
+        menu: Paramètres
+    super:
+        title: Super-administration
+    user:
+        change-password: Modifier votre mot de passe
+        logout: Se déconnecter
+    welcome: Bienvenue
+    list:
+        back-to-list: Retour à la liste
+        empty: Aucun résultat
+    form:
+        update: Mise à jour
+    search:
+        placeHolder: Rechercher
+        action: Ok
+        allCat: Tout
+    delete:
+        action: Supprimer
+        confirm:
+            title: Confirmation de suppression
+
+    dashboard:
+        menu: Tableau de bord
+        title: Tableau de bord
+    informations:
+        menu: Informations générales
+    eventSell:
+        menu: Ventes évenementielles
+    offers:
+        menu: Offres
+    partners:
+        menu: Partenaires
+    media:
+        menu: Média
+    site:
+        menu: Sites
+    stats:
+        menu: Statistiques/ Tracking
+    notifications:
+        menu: Notifications
+    edit: Modifier
+    archive: Archiver
+    active: Actif
+    inactive: Inactif
+    archived: Archivé
+    unarchived: Non archivé
+    actions:
+        name: Actions
+dashboard:
+    mainTitle: Activité récente du site
+    right:
+        edito: + Ajouter un contenu édito
+        title: Liens rapides
+        addOffer: + Ajouter une nouvelle offre
+        addPartner: + Ajouter un nouveau partenaire
+    subTitle: Statisques des 30 derniers jours
+    statList:
+        registration: Inscriptions
+        ctaRate: Nombre moyen de clics sur CTA
+        offerUpv: Pages offres vues
+
+searchAdminForm:
+    Partner: Partenaires
+    FAQ: Faq
+    Offer: Offres
+    Testimonial: Témoignages
+    User: Utilisateurs
+    Block: Blocs de contenu
+
+searchAdminResult:
+    noresult: Votre recherche n'a pas de résultat.
+    Partner: Partenaires
+    FAQ: Faq
+    Offer: Offres
+    Testimonial: Témoignages
+    User: Utilisateurs
+    Block: Blocs de contenu
+    Page: Pages
+

@@ -1,0 +1,160 @@
+{% extends "::base.html.twig" %}
+{% set currentSite = getCurrentSite() %}
+
+{% block title %}
+    {% if currentSite is not null %}
+        {{ "admin.title"|trans }} {{ currentSite }}
+    {% else %}
+        {{ "admin.super.title"|trans }}
+    {% endif %}
+{% endblock title %}
+
+{% block meta %}
+    {{ parent() }}
+    <meta name="robots" content="noindex">
+{% endblock meta %}
+
+{% block css %}
+    {{ parent() }}
+    {% stylesheets
+        '@LCHAdminBundle/Resources/public/css/admin-main.css'
+    %}
+    <link rel="stylesheet" href="{{ asset_url }}" type="text/css" />
+    {% endstylesheets %}
+{% endblock css %}
+
+{% block bodyclasses %}admin{% endblock %}
+
+{% block bodyattributes %}data-route="{{ app.request.attributes.get('_route') }}"{% endblock %}
+
+{% block body %}
+    <header id="main-bar">
+        <nav class="navbar navbar-default">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#right-bar" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="{{ path('devgiants_app_homepage') }}" target="blank" >
+                        {% if currentSite != null %}
+                            {% if currentSite.logo %}
+                                <img src="{{ currentSite.logo.url }}" alt="{{ currentSite.logo.alt }}"/>
+                            {% endif %}
+                            <span>
+                                {{ "admin.bo"|trans }} {{ currentSite.name }} 
+                            </span>
+
+                        {% else %}
+                            {% image '@LCHAppBundle/Resources/public/images/logo-quintess.png' %}
+                                <img src="{{ asset_url }}" alt="logo-quintess"/>
+                            {% endimage %}
+                            <span>{{ "admin.back-office"|trans }}</span>
+                        {% endif %}
+                    </a>
+                    {% if currentSite != null %}
+                        {# <a class="navbar-brand text-primary" href="{{ getHomePageLink(currentSite) }}" target="blank" title="Accéder à {{currentSite}}">
+                            <span class="glyphicon glyphicon-circle-arrow-right"></span>
+                        </a> #}
+                    {% endif %}
+                </div>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="right-bar">
+                    <ul class="nav navbar-nav navbar-right">
+                        {% if is_granted('ROLE_ADMIN') and not is_granted('ROLE_SUPER_ADMIN')%}
+                            <li>{{ render(controller('LCHNotificationBundle:Notification:badge', {  } )) }}</li>
+                            {% if currentSite != null and currentSite.hasModuleActivated(constant('RATING', currentSite)) %}
+                                {{ render(controller('LCHModuleBundle:Rating/Rating:badge', {  } )) }}
+                            {% endif %}
+                        {% endif %}
+                        {{  render(controller('LCHAdminBundle:Default:searchAdmin', {'request': app.request})) }}
+                        {% if is_granted('ROLE_ADMIN') and not is_granted('ROLE_SUPER_ADMIN')%}
+                            <li><a class="admin-otherSite">{{ render(controller('LCHAdminBundle:Admin:otherSite', {  } )) }}</a></li>
+                        {% endif %}
+                        <li class="helloUser">
+                            <span>{{ "admin.welcome"|trans }}, <br></span><strong>{{ app.user.username }}</strong>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                <span class="glyphicon glyphicon-cog"></span> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{path('devgiants_user_admin_change_password')}}">{{ "admin.user.change-password"|trans }}</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ path('devgiants_user_admin_logout') }}" class="text-danger">{{ "admin.user.logout"|trans }}</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+    </header>
+    <div class="container">
+        {#{{ Load super admin page and menu }}#}
+        {% block menu %}
+            {% if(noMenu is not defined) %}
+
+                {% set menuRendered %}
+                    {{ knp_menu_render('main', {depth: 1}, 'list') }}
+                {% endset %}
+
+                {% if (app.session.get('currentSite')) is null %}
+                    <nav id="main_menu" class="col-xs-12">
+                        {#{{ knp_menu_render('LCHAdminBundle:MenuBuilder:superAdminMainMenu', {depth: 1}, 'list') }}#}
+                        {{ menuRendered }}
+                    </nav>
+                    <section id="content"  class="col-xs-12">
+                {#{{ Load admin page and menu }}#}
+                {% else %}
+                    <nav id="main_menu" class="col-xs-2">
+                        <div class="tabbable tabs-left">
+                            {#{{ knp_menu_render('LCHAdminBundle:MenuBuilder:adminMainMenu', {depth: 1}, 'list') }}#}
+                            {{ menuRendered }}
+                        </div>
+                    </nav>
+                    <section id="content" class="col-xs-10">
+                {% endif %}
+            {% endif %}
+        {% endblock menu %}
+                <div class="row">
+                    <h1 class="col-xs-6">{% block h1 %}{% endblock h1 %}</h1>
+                    <div id="buttons" class="col-xs-6 text-right">
+                        {% block buttons %}
+                        {% endblock buttons %}
+                    </div>
+                </div>
+                {% for label, flashes in app.session.flashbag.all %}
+                    {% for flash in flashes %}
+                        {% if label == 'error' %}
+                            <div class="alert alert-danger">
+                        {% else %}
+                            <div class="alert alert-{{ label }}">
+                        {% endif %}
+                            <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            {{ flash|trans|raw }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% block content %}{% endblock content %}
+        </section>
+
+    </div>
+{% endblock %}
+{% block scripts %}
+    {{ parent() }}
+    {% javascripts
+        '@LCHAdminBundle/Resources/public/js/jquery.admin.main.js'
+        '@LCHAdminBundle/Resources/public/js/jquery.deserialize.min.js'
+        '@LCHAdminBundle/Resources/public/js/admin.deleteEntity.js'
+        '@LCHAdminBundle/Resources/public/js/admin.table.entity.js'
+        '@LCHAdminBundle/Resources/public/js/admin.seoable.js'
+        '@LCHAdminBundle/Resources/public/js/admin.menuAncestorSelection.js'
+    %}
+        <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script src="{{ asset('bundles/fosjsrouting/js/router.js') }}"></script>
+    <script src="{{ path('fos_js_routing_js', {'callback': 'fos.Router.setData'}) }}"></script>
+{% endblock scripts %}

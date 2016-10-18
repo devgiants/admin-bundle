@@ -1,0 +1,286 @@
+{% extends 'bootstrap_3_layout.html.twig' %}
+
+{%- block choice_widget -%}
+    {% if (double_list is defined and double_list == true) %}
+        {{- block('choice_widget_double_list') -}}
+    {% elseif (expanded is defined and expanded == true) %}
+        {{- block('choice_widget_expanded') -}}
+    {% else %}
+        {{- block('choice_widget_collapsed') -}}
+    {% endif %}
+{%- endblock choice_widget -%}
+
+
+{%- block choice_widget_double_list -%}
+    {% set selected = "" %}
+    <div {{ block('widget_container_attributes') }} class="row double-list">
+        <div class="master col-xs-6">
+            <ul class="complete-list">
+                {%- for choice in choices %}
+                    <li>
+                        <a href="#" title="{{ choice.label }}">{{ choice.label }}</a>
+                    </li>
+
+                    {% if choice is selectedchoice(value) %}
+                        {% set selected %}
+                        <li>
+                            <a href="#" title="{{ choice.label }}">{{ choice.label }}</a>
+                        </li>
+                        {% endset %}
+                    {% endif %}
+                {% endfor -%}
+            </ul>
+        </div>
+        <div class="selected-list col-xs-6">
+            detail
+            {{ selected }}
+        </div>
+        <input type="hidden" name="test" value="" />
+    </div>
+{%- endblock choice_widget_double_list -%}
+
+{% block vich_file_widget %}
+{% spaceless %}
+    <div class="vich-file">
+        
+        {{ form_errors(form.file) }}
+        {{ form_widget(form.file) }}
+        <p class="help">{{('media.pdf.fileNeed')|trans}}</p>
+        {#{% if form.delete is defined %}
+        {{ form_row(form.delete) }}
+        {% endif %}#}
+
+        {% if download_uri is defined and download_uri %}
+        <a href="{{ download_uri }}">{{ 'download'|trans({}, 'VichUploaderBundle') }}</a>
+        {% endif %}
+    </div>
+{% endspaceless %}
+{% endblock %}
+
+{% block vich_image_widget %}
+{% spaceless %}
+    <div class="vich-image">
+        <div class="row">
+            <div class="col-md-6">
+                {{ form_errors(form.file) }}
+                {{ form_widget(form.file) }}
+                <p class="help">{{('media.image.fileNeed')|trans}}</p>
+
+                {#{% if form.delete is defined %}
+                    {{ form_row(form.delete) }}
+                {% endif %}#}
+            </div>
+            <div class="col-md-6">
+                {% if download_uri is defined and download_uri %}
+                    <img data-toggle="modal" data-target="#myModal" src="{{form.vars.object.url}}" alt="" width="200px"/>
+                    <div id="myModal" class="modal fade" role="dialog">
+                        <div class="modal-dialog modal-lg">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                  <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                      <h4 class="modal-title">{{form.vars.object.fileName}}</h4>
+                                  </div>
+                                  <div class="modal-body">
+                                      <img src="{{ download_uri }}" alt=""/>
+                                  </div>
+                                  <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'admin.close'|trans }}</button>
+                                  </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                {% if show_download_link and download_uri is defined and download_uri%}
+                    <a href="{{ download_uri }}">{{ 'download'|trans({}, 'VichUploaderBundle') }}</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endspaceless %}
+{% endblock %}
+
+
+{% block addmedia_widget %}
+{% spaceless %}
+    {# First raw #}
+    
+    {% set rand = random() %}
+    
+    <div class="col-xs-6">
+        {# Input hidden where the media id is store #}
+        <input type="hidden" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value.id }}" {% endif %}/>
+        <p id="displayImageName-{{form.vars.name}}">{% if value %}{{value.name}}{% endif %}</p>
+        <button 
+            data-toggle="modal" 
+            data-target="#myModal-{{form.vars.name}}-{{rand}}" 
+            id="addMedia-{{form.vars.name}}-{{rand}}" 
+            class="btn btn-default" 
+            data-url='{{path('devgiants_media_admin_list_add_media')}}'
+            type="button"
+            input-target = '{{form.vars.name}}'
+            {{ block('button_attributes') }}
+            >
+            {{ 'media.addOne'|trans }}
+        </button>
+        <p class="help">
+            {% if form.vars.attr['data-test'] is defined %}
+                <span class="small text-success">{{(form.vars.attr['data-test'])|trans|raw}}</span>
+            {% elseif form.vars.attr['data-url-filter'] == "image" %}
+                {{('media.'~form.vars.attr['data-url-filter']~'.fileNeed')|trans}}
+            {% endif%}
+        </p>
+    </div>
+    
+    {# Second raw #}
+    <div class="col-xs-6">
+        {# If the media is an image, then display thumbnail #}
+        
+        {% if form.vars.attr['displayThumb'] is not defined or form.vars.attr['displayThumb'] == true %}
+            {% if value.type is defined and value.type == "image" %}
+                <p id="displayImageUrl-{{form.vars.id}}">
+                    {% if value.url is not null %}
+                        <img src="{{value.url}}" width="150"/>
+                    {% else %}
+                        <img src="" width="150"/>
+                    {% endif %}
+                </p>
+            {% elseif form.vars.attr['data-url-filter'] == "image" %}
+                
+            <p id="displayImageUrl-{{form.vars.id}}"> <img src="" width="150"/>
+               </p>
+            {% endif %}
+        {% endif %}
+        {% if value.type is defined and value.type == "video" %}
+            <p><a href="" id="deleteVideo" data-input-target="{{form.vars.name}}">Supprimer cette vidéo</a></p>
+        {% endif %}
+    </div>
+
+    <div id="myModal-{{form.vars.name}}-{{rand}}" class="modal fade" role="dialog" input-target='{{form.vars.name}}'>
+        <div class="modal-dialog modal-lg">
+            <!-- Modal content-->
+            <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">{{form.vars.name|capitalize}}</h4>
+                  </div>
+                  <div id="mediaaddcontent" class="modal-body clearfix">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'admin.close'|trans }}</button>
+                  </div>
+            </div>
+        </div>
+    </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block devgiants_catalogbundle_offer_image_carroussel_widget %}
+    {% spaceless %}
+        <li>
+            <table class="table">
+                <tr>
+                    <td>{{form_widget(form.image)}}{{form_widget(form.position)}}</td>
+                    <td><span class="glyphicon glyphicon-fullscreen"></span></td>
+                    <td class="third"></td>
+                </tr>
+            </table>
+        </li>
+    {% endspaceless %}
+{% endblock %}
+
+{% block devgiants_catalogbundle_offer_image_carroussel_mobile_widget %}
+    {% spaceless %}
+        <li>
+            <table class="table">
+                <tr>
+                    <td>{{form_widget(form.image)}}{{form_widget(form.position)}}</td>
+                    <td><span class="glyphicon glyphicon-fullscreen"></span></td>
+                    <td class="third"></td>
+                </tr>
+            </table>
+        </li>
+    {% endspaceless %}
+{% endblock %}
+
+{% block devgiants_catalogbundle_slogan_widget %}
+    {% spaceless %}
+        <li>
+            <div class="row">
+                <div class="col-md-8">{{form_widget(form.name)}}</div>
+                <div class="col-md-2 text-center"><span class="glyphicon glyphicon-fullscreen"></span></div>
+                <div class="col-md-2 text-center third"></div>
+            </div>
+        </li>
+    {% endspaceless %}
+{% endblock %}
+
+{% block devgiants_catalogbundle_tab_widget %}
+    {% spaceless %}
+        <div class="row">
+            <div class="col-md-2">{{form_label(form.title)}}</div>
+            <div class="col-md-3">{{form_widget(form.title)}}</div>
+            <div class="col-md-2">{{ 'catalog.offer.form.description.tabs.maxChar' | trans }}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">{{form_label(form.description)}}</div>
+            <div class="col-md-12">{{form_widget(form.description)}}</div>
+        </div>
+    {% endspaceless %}
+{% endblock %}
+
+{% block form_row %}
+    {% if form.vars['attr']['inline'] is not defined or form.vars['attr']['inline'] == false %}
+        <div class="form-group clearfix">
+            <div class="col-xs-2">
+            {{ form_label(form) }}
+            </div>
+            <div class="col-xs-10">
+                {{ form_widget(form) }}
+                {{ form_errors(form) }}
+                <p>{% if form.vars['attr']['help'] is defined %}
+                    {{form.vars['attr']['help']|trans}}<br>
+                {% endif %}
+                {% if form.vars['attr']['constraint'] is defined %}
+                    {{form.vars['attr']['constraint']|trans}}
+                {% endif %}</p>
+            </div>
+            {% if form.vars['attr']['separateur'] is not defined or form.vars['attr']['separateur'] == true %}
+                <hr class="col-xs-12" />
+            {% endif %}
+        </div>
+    {% else %}
+        <div class="form-group">
+            {{ form_label(form) }}
+            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block userbrothertype_widget %}
+    <div class="row">
+        {{form_row(form.id)}}
+        <div class="col-md-6">{{form_row(form.role)}}</div>
+        <div class="col-md-6">
+            {{form_label(form.archived)}}
+            {{form_widget(form.archived,{'attr':{'class':'checkbox-inline'} })}}
+        </div>
+    </div>
+{% endblock %}
+
+{% block form_label %}
+    {% if label is empty %}
+        {% set label = name|humanize %}
+    {% endif %}
+    <label for="{{ id }}" class="control-label {% if required %}required{% endif %}">
+        {{ label|trans }}
+        {% if required %}
+            <span class="symfony-form-required text-danger" title="This field is required">*</span>
+        {% endif %}
+
+    </label>
+    {% if form.vars.attr.help is defined %}
+        &nbsp;<span class="glyphicon glyphicon-question-sign" title="{{form.vars.attr.help|trans}}" data-toggle="tooltip" data-placement="right"></span>
+    {% endif %}
+{% endblock %}

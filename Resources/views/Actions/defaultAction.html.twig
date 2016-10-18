@@ -1,0 +1,43 @@
+{# Route definition #}
+{% if action.route is defined %}
+    {% set url = url(action.route, RouteParams)%}
+{% else %}
+    {% set url = url(baseRoute~actionName, RouteParams)%}
+{% endif %}
+
+{# Label definition #}
+{% if action.label is defined %}
+    {% set label = action.label|trans %}
+{% else %}
+    {% set label = ('app.'~actionName)|trans %}
+{% endif %}
+
+{% if action.confirmation is defined %}
+    <a class="{{actionName}}" data-toggle="modal" data-target="#myModal-{{actionName}}-{{record.id}}" href="">
+        {{ label }}
+    </a>
+    <div class="modal fade" id="myModal-{{actionName}}-{{record.id}}" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{{action.confirmation.title|trans}}</h4>
+                </div>
+                <div class="modal-body">
+                  <p>{{action.confirmation.body|trans}}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ 'admin.close'|trans }}</button>
+                    <a class="btn btn-primary" class="{{actionName}}" href="{{ url }}">
+                        {{ label }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <a class="{{actionName}}" href="{{ url }}">
+        {{ label }}
+    </a>
+{% endif %}
+

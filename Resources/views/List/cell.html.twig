@@ -1,0 +1,7 @@
+{% if value is iterable %}
+    {% for subFieldName, subField in value %}
+        <p>{{ subField }}</p>
+    {% endfor %}
+{% else %}
+    {{ value|raw }}
+{% endif %}

@@ -1,0 +1,41 @@
+{% set RouteParams = { 'id': record.id } %}
+{% if baseRouteParams is defined %}
+    {% for key, BaseRouteParam in baseRouteParams %}
+        {% set RouteParams = RouteParams|merge({ (key) : attribute(record, BaseRouteParam) }) %}
+    {% endfor %}
+{% endif %}
+
+
+
+    {# This if exist only for media#}
+    {#{% if thumbnailField is defined %}#}
+        {#{% if attribute(record, thumbnailField) is defined %}#}
+            {#<td>#}
+                {#<img src="{{ attribute(record, thumbnailField) }}" width="100"/>#}
+            {#</td>#}
+        {#{% else %}#}
+            {#<td></td>#}
+        {#{% endif %}#}
+
+<tr>
+    {% if options.batchActions is defined %}
+        <td>
+            <input name="batchActionItem" value="{{ record.id }}" type="checkbox" />
+        </td>
+    {% endif %}
+    <td>
+        {% if options.actionForId is defined %}
+            <a href="{{ path(options.baseRoute ~ options.actionForId, RouteParams) }}"> {{ record.id }}</a>
+        {% else %}
+            {{ record.id }}
+        {% endif %}
+    </td>
+    {% for fieldName, fieldData in options.fields %}
+        <td>
+            {{ renderCell(record, fieldName, fieldData, options) }}
+        </td>
+    {% endfor %}
+    <td>
+        {{ renderActions(record, options) }}
+    </td>
+</tr>

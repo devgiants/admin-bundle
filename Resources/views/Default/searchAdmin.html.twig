@@ -1,0 +1,12 @@
+{{ form_start(form, {'attr':{'class':'navbar-form navbar-left form-inline'}}) }}
+    {{ form_widget(form.query,{}) }}
+    {#{{ form_widget(form.query,{'full_name':'query'}) }}#}
+    {{ form_widget(form.type,{}) }}
+    {#{{ form_widget(form.type,{'full_name':'type'}) }}#}
+
+    {# {{ form_widget(form.submit,{}) }} #}
+    {# <input type="submit" value='<span class="glyphicon glyphicon-search"></span>' class="btn btn-default"/> #}
+    <button type="submit" class="btn btn-primary">
+  		<span class="glyphicon glyphicon-search"></sppan> 
+	</button>
+{{ form_end(form) }}

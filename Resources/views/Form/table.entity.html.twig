@@ -1,0 +1,208 @@
+<div class="row">    
+    <div class="col-md-6">
+        {{ knp_pagination_render(records) }}
+    </div>
+    <div class="col-md-6">
+        {% if baseRouteSearch is defined %}
+            <form class="form-inline pull-right" method="get" action="{{path(baseRouteSearch)}}">
+                <input type="text" id="searchList" name="searchList" placeholder="{{'list.search.placeHolder'|trans}}" class="form-control " value="{{app.request.get('searchList')}}"/>
+                <input type="submit" value="{{'list.search.action'|trans}}" class="btn-default btn"/>
+            </form>
+        {% endif %}
+    </div>
+</div>
+    
+<div class="table-responsive">
+    
+    <table id="{{ entity ~ '_records' }}" class="table table-bordered table-striped records_list table-hover table-responsive">
+        {% if batchActions is defined %}
+            <caption>
+                <form class="form-inline" id="bachtActionForm">
+                    Actions communes à tous les utilisateurs sélectionnés
+                    <select class="form-control">
+                        {% for key,batchAction in batchActions%}
+                        <option value="{{url(baseRoute ~ batchAction)}}">{{key}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-default btn">Ok</button>
+                </form>
+            </caption>
+        {% endif %}
+        <thead>
+        <tr>
+            {% if batchActions is defined %}<th></th>{% endif %}
+                <th>{{ knp_pagination_sortable(records, 'Id', entity ~ '.id') }}</th>
+            {% if thumbnailField is defined %}
+                <th>{% trans %}Thumbnail{% endtrans %}</th>
+            {% endif %}
+            {% for fieldName, field in fields %}
+                <th{% if records.isSorted(entity ~ '.' ~ field) %} class="sorted"{% endif %}>{{ knp_pagination_sortable(records, fieldName|trans, entity ~ '.' ~ field) }}</th>
+            {% endfor %}
+            {% if (showArchiveButton is defined and showArchiveButton == true) or (showActiveButton is defined and showActiveButton == true) or (records[0].active is defined) %}
+                <th>{% trans %}&Eacute;tat{% endtrans %}</th>
+            {% endif %}
+            <th>{% trans %}Actions{% endtrans %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            
+            {% set RouteParams = { 'id': record.id } %}
+            {% if baseRouteParams is defined %}
+                {% for key, BaseRouteParam in baseRouteParams %}
+                    {% set RouteParams = RouteParams|merge({ (key) : attribute(record, BaseRouteParam) }) %}
+                {% endfor %}
+            {% endif %}
+            
+            {% set baseRouteP = baseRoute%}
+            <tr>
+                 {% if batchActions is defined %}
+                    <td>
+                        <input name="batchActionItem" value="{{ record.id }}" type="checkbox" /> 
+                    </td>
+                 {% endif %}
+                <td>
+                    {% if "edit" in actions %}
+                        <a href="{{ path(baseRoute ~ 'edit', RouteParams) }}"> {{ record.id }}</a>
+                    {% else %}
+                        {{ record.id }}
+                    {% endif %}
+                </td>
+                
+                {# This if exist only for media#}
+                {% if thumbnailField is defined %}
+                    {% if attribute(record, thumbnailField) is defined %}
+                        <td>
+                            <img src="{{ attribute(record, thumbnailField) }}" width="100"/>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endif %}
+                
+                {% for fieldName, field in fields %}
+                    <td>
+                        {% if field == "status" and entity == "rating" %}
+                            {% if attribute(record, field) %}
+                                <span class="label label-success">Validé</span>
+                            {% else %}
+                                <span class="label label-danger">En attente</span>
+                            {% endif %}
+                        {% else %}
+                            {% if attribute(record, field) is iterable %}
+                                {% for subFieldName, subField in attribute(record, field) %}
+                                    <p>{{ subField }}</p>
+                                {% endfor %}
+                            {% else %}
+                                {{ attribute(record, field) }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+                        {% if (showArchiveButton is defined and showArchiveButton == true) or (showActiveButton is defined and showActiveButton == true) or (record.active is defined) %}
+                            <td>
+                                {% if record.archived is defined and record.archived == true %}
+                                    <span class="label label-danger">Archivé</span>
+                                {% elseif record.archived is defined and record.archived == false %}
+                                    <span class="label label-success">Non archivé</span>
+                                {% endif %}
+
+                                {% if record.active is defined and record.active == true %}
+                                    <span class="label label-success">Actif en front</span>
+                                {% elseif record.active is defined and record.active == false %}
+                                    <span class="label label-danger">Désactivé en front</span>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                <td>
+                    {% for actionName, action in actions %}
+                            {% if action == "edit" %}
+                                <a class="{{action}} btn btn-default" href="{{ path(baseRoute ~ action, RouteParams) }}">
+                                    <span class="glyphicon glyphicon-edit"></span> {{ actionName|trans }}
+                                </a>
+                            {% else %}
+                                <a class="{{action}}" href="{{ path(baseRoute ~ action, RouteParams) }}">{{ actionName|trans }}</a>
+                            {% endif %}
+                    {% endfor %}
+                    {% if showdeleteButton is defined  %}
+                        <button type="button" class="btn btn-danger"
+                                data-url="{{ path(baseRoute~'remove',{"id":record.id} ) }}"
+                                data-title='{{ "admin.delete.confirm.title" |trans }}'
+                                data-toggle="modal"
+                                data-target="#removeRecord" >
+                            <span class="glyphicon glyphicon-remove"></span> {{ 'admin.delete.action'|trans }}
+                        </button>
+                    {% endif %}
+                    {% if showdeleteMediaButton is defined  %}
+                        <button type="button" class="btn btn-danger"
+                                data-url="{{ path(baseRoute~'remove',{"id":record.id, "type":record.type} ) }}"
+                                data-title='{{ "admin.delete.confirm.title" |trans }}'
+                                data-toggle="modal"
+                                data-target="#removeRecord" >
+                            <span class="glyphicon glyphicon-remove"></span> {{ 'admin.delete.action'|trans }}
+                        </button>
+                    {% endif %}
+                    {% if showArchiveButton is defined and showArchiveButton == true  %}
+                        {% if not record.archived %}
+                            <button type="button" class="btn btn-danger"
+                                    data-url="{{ path(baseRoute~'archive',{"id":record.id} ) }}"
+                                    data-title='{{ "site.archive.confirmation"|trans}}'
+                                    data-toggle="modal"
+                                    data-target="#archiveRecord" >
+                                <span class="glyphicon glyphicon-eye-close"></span> {{ 'user.archive.action'|trans }}
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-success"
+                                    data-url="{{ path(baseRoute~'unarchive',{"id":record.id} ) }}"
+                                    data-title='{{ "site.unarchive.confirmation"|trans}}'
+                                    data-toggle="modal"
+                                    data-target="#archiveRecord" >
+                                <span class="glyphicon glyphicon-eye-open"></span> {{ 'site.unarchive.title'|trans }}
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% if showActiveButton is defined and showActiveButton == true  %}
+                        {% if record.active %}
+                            <button type="button" class="btn btn-danger"
+                                    data-url="{{ path(baseRoute~'archive',{"id":record.id} ) }}"
+                                    data-title='{{ "site.archive.confirmation"|trans}}'
+                                    data-toggle="modal"
+                                    data-target="#archiveRecord" >
+                                <span class="glyphicon glyphicon-eye-close"></span> {{ 'user.archive.action'|trans }}
+                            </button>
+                        {% else %}
+                            <button type="button" class="btn btn-success"
+                                    data-url="{{ path(baseRoute~'unarchive',{"id":record.id} ) }}"
+                                    data-title='{{ "site.unarchive.confirmation"|trans}}'
+                                    data-toggle="modal"
+                                    data-target="#archiveRecord" >
+                                <span class="glyphicon glyphicon-eye-open"></span> {{ 'site.unarchive.title'|trans }}
+                            </button>
+                        {% endif %}
+                    {% endif %}
+                    {% if showShowOnline is defined %}
+                        {% set p = {} %}
+                        {% for key, value in showShowOnline['params'] %}
+                            {% set p = p|merge({  (key) : attribute(record, value) }) %}
+                        {% endfor %}
+                        <a target="_blank" href="{{ path(showShowOnline['route'],p) }}" class="btn btn-primary">
+                            <span class="glyphicon glyphicon-eye-open"></span> Voir en ligne
+                        </a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(records) }}
+    </div>
+</div>
+
+{% if showdeleteButton is defined or showdeleteMediaButton is defined %}
+    {% include ("@LCHAdmin/Modal/admin_delete_modal.html.twig") %}
+{% endif %}
+
+{% if showArchiveButton is defined  %}
+    {% include ("@LCHAdmin/Modal/admin_archive_modal.html.twig") %}
+{% endif %}

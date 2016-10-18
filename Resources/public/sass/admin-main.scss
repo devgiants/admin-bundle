@@ -1,0 +1,254 @@
+/*************************************
+* Login forms
+*/
+#login-page {
+  #site-logo {
+    margin: 20px auto;
+  }
+  #reset-password {
+    line-height: 35px;
+  }
+}
+
+/*************************************
+* Inside admin part
+*/
+.admin {
+  /* Admin main nav */
+  header#main-bar {
+    $line-height: 48px;
+    .navbar {
+      background-color: #ddd;
+      .navbar-header {
+        .navbar-brand {
+          img {
+            display: inline-block;
+            max-height: 100%;
+          }
+        }
+      }
+    }
+    .admin-otherSite{
+      padding-top: 7px;
+      padding-bottom: 0px;
+    }
+    .btn-badge{
+      padding-top: 7px;
+      padding-bottom: 0;
+
+    }
+    .badge{
+      position: absolute;
+      top: 1px;
+      color: white;
+      background-color: red;
+    }
+    .helloUser {
+      padding-top: 5px;
+    }
+    .dropdown-toggle {
+      font-size: 18px;
+    }
+    // #right-bar {
+    //   ul>li {
+    //     //line-height: $line-height;
+    //     padding: 0 10px;
+    //     >a {
+    //       display: inline-block;
+    //       padding-left: 0;
+    //       padding-right: 0;
+    //     }
+    //   }
+    // }
+  }
+  /* Positionnable Bootstrap tabs */
+  .tabs-below, .tabs-right, .tabs-left {
+    > .nav-tabs {
+      border-bottom: 0;
+    }
+  }
+
+  .tabs-below {
+    > .nav-tabs {
+      border-top: 1px solid #ddd;
+      > li {
+        margin-top: -1px;
+        margin-bottom: 0;
+        > a {
+          -webkit-border-radius: 0 0 4px 4px;
+          -moz-border-radius: 0 0 4px 4px;
+          border-radius: 0 0 4px 4px;
+          &:hover, :focus {
+            border-top-color: #ddd;
+            border-bottom-color: transparent;
+          }
+        }
+      }
+      > .active, .current_ancestor {
+        > a, a:hover, a:focus, a:active {
+          border-color: transparent #ddd #ddd #ddd;
+        }
+      }
+    }
+  }
+
+  .tabs-left {
+    > .nav-tabs {
+      float: left;
+      margin-right: 19px;
+      border-right: 1px solid #ddd;
+      > li {
+        float: none;
+        > a {
+          min-width: 74px;
+          margin-right: 0;
+          margin-bottom: 3px;
+          margin-right: -1px;
+          -webkit-border-radius: 4px 0 0 4px;
+          -moz-border-radius: 4px 0 0 4px;
+          border-radius: 4px 0 0 4px;
+          &:hover, :focus {
+            border-color: #eeeeee #dddddd #eeeeee #eeeeee;
+          }
+        }
+      }
+      .active, .current_ancestor {
+        >a  {
+          background-color: #FFF;
+          border-color: #ddd transparent #ddd #ddd;
+          *border-right-color: #ffffff;
+        }
+      }
+    }
+  }
+
+  .tabs-right {
+    > .nav-tabs {
+      float: right;
+      margin-left: 19px;
+      border-left: 1px solid #ddd;
+      > li {
+        > a {
+          margin-left: -1px;
+          -webkit-border-radius: 0 4px 4px 0;
+          -moz-border-radius: 0 4px 4px 0;
+          border-radius: 0 4px 4px 0;
+          &:hover, :focus {
+            border-color: #eeeeee #eeeeee #eeeeee #dddddd;
+          }
+        }
+      }
+      .active, .current_ancestor {
+        > a {
+          &:hover, &:focus, &:active {
+            border-color: #ddd #ddd #ddd transparent;
+            *border-left-color: #ffffff;
+          }
+        }
+      }
+    }
+  }
+
+  .tab-content {
+    > .tab-pane {
+      display: none;
+    }
+    > .active {
+      display: block;
+    }
+  }
+
+
+  #buttons {
+    line-height: 66px;
+  }
+
+  /* Specific radio button group inline */
+  .inline-list {
+    .radio {
+      display: inline-block;
+      label {
+        margin-right: 10px;
+        border-radius: 5px;
+        padding: 20px 30px;
+        border: 1px solid black;
+      }
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  .mbs {
+      margin-bottom: 10px;
+  }
+
+  .mbm {
+    margin-bottom: 20px;
+  }
+
+  .mbl {
+    margin-bottom: 30px;
+  }
+}
+
+
+.admin-table-container {
+  .sort-arrow {
+    position: absolute;
+    top: 5px;
+    right: -15px;
+    content: " ";
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+
+  }
+  $space: 20px;
+  .table-responsive {
+    margin: $space 0;
+
+    table {
+      thead {
+        tr {
+          th {
+            &.sorted {
+              a.asc {
+                position: relative;
+                &:after {
+                  @extend .sort-arrow;
+                  border-bottom: 5px solid black;
+                }
+              }
+              a.desc {
+                position: relative;
+                &:after {
+                  @extend .sort-arrow;
+
+                  border-top: 5px solid black;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Scaffolding
+.row.no-gutter {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+// Helpers
+.row.no-gutter [class*='col-']:not(:first-child),
+.row.no-gutter [class*='col-']:not(:last-child),
+.container.no-gutter,
+[class*='col-'].no-gutter {
+  padding-right: 0;
+  padding-left: 0;
+}

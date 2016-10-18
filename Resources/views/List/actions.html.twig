@@ -1,0 +1,25 @@
+{% for action in actions %}
+    {% set attributes %}
+        {% for name, attributeValues in action.attributes %}
+            {{ name }}="{{ attributeValues|join(' ') }}" 
+        {% endfor %}
+    {% endset %}
+
+    {% set actionContent %}
+        {% if action.icon is not null %}
+            <i class="{{ action.icon }}"></i>
+        {% endif %}
+        {{ action.label }}
+    {% endset %}
+
+    {% if action.type == constant('LINK', action) %}
+        <a {{ attributes }} href="{{ path(action.route, action.routeParameters) }}">
+            {{ actionContent }}
+        </a>
+    {#So far, if not link, it's button#}
+    {% else %}
+        <button type="button" {{ attributes }}>
+            {{ actionContent }}
+        </button>
+    {% endif %}
+{% endfor %}

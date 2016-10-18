@@ -1,0 +1,21 @@
+{% extends '@LCHAdmin/base.admin.html.twig' %}
+
+{% block title %}{{ 'Tableau de bord'|trans }} - {{ parent() }}{% endblock title %}
+
+{% block content %}
+    {% include ("form/list.html.twig") with {
+        'records'   : notifications,
+        'fields'    : [
+            {
+                'field' : 'title' ,
+                'label': 'Titre',
+                'template': 'LCHCatalogBundle:Partner:fields/notificationTitle.html.twig',
+            },
+            {
+                'field' : 'actions',
+                'label' : 'Actions',
+                'template': 'LCHCatalogBundle:Partner:fields/notificationActions.html.twig',
+            }
+        ]}
+    %}
+{% endblock content %}

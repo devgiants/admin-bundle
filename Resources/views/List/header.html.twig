@@ -1,0 +1,29 @@
+{% import _self as adminList %}
+
+{% macro isSorted(records, entityAlias, fieldName) %}
+    {% if records.isSorted(entityAlias ~ '.' ~ fieldName) %} class="sorted"{% endif %}
+{% endmacro %}
+<thead>
+    <tr>
+        {% if options.batchActions is defined %}
+            <th></th>
+        {% endif %}
+        <th {{ adminList.isSorted(records, options.entity.alias, 'id') }}>{{ knp_pagination_sortable(records, 'Id', options.entity.alias ~ '.id') }}</th>
+        {#{% if thumbnailField is defined %}#}
+            {#<th>{% trans %}Thumbnail{% endtrans %}</th>#}
+        {#{% endif %}#}
+
+        {% for fieldName, fieldData in options.fields %}
+            {% if fieldData.sortable is defined and fieldData.sortable and fieldName != 'stateFields' %}
+                <th{{ adminList.isSorted(records, options.entity.alias, fieldName) }}>
+                    {{ knp_pagination_sortable(records, fieldData.label|trans, options.entity.alias ~ '.' ~ fieldName) }}
+                </th>
+            {% else %}
+                <th>
+                    {{ fieldData.label|trans }}
+                </th>
+            {% endif %}
+        {% endfor %}
+        <th>{{ "admin.actions.name"|trans }}</th>
+    </tr>
+</thead>

@@ -1,0 +1,139 @@
+{#
+    By Matthieu Léorat
+    matthieu.leorat@tutanota.com
+    Update : 31/03/2016
+#}
+
+{# Documentation
+
+    Filter: You can give a form object trougth the filterForm option. It will display it at the top of the list
+
+    Actions
+        Minimal action:
+            'actions'   : { 'edit':{} }
+        available parameters:
+            - route : Route name for the action. Default is concatenation of baseRoute paramn and action name
+            - label : A label transaltable. Default is the concatanetion of "app." and action name
+#}
+
+{# Filter Form #}
+{% if filterForm is defined %}
+    {{form_start(filterForm,{'attr':{'class':'form-inline'} })}}
+        {% for children in filterForm %}
+            {{form_row(children)}}
+        {% endfor %}
+        <input type="submit" class="btn btn-default" value="{{'app.filter'|trans}}" />
+    {{form_end(filterForm)}}
+{% endif %}
+
+
+<div class="row">
+    {# Pagination #}
+    <div class="col-md-6">
+        {{ knp_pagination_render(records) }}
+    </div>
+    <div class="col-md-6">
+        {# Search Form #}
+        {% if baseRouteSearch is defined %}
+            <form class="form-inline pull-right" method="get" action="{{path(baseRouteSearch)}}">
+                <input type="text" id="searchList" name="searchList" placeholder="{{'list.search.placeHolder'|trans}}" class="form-control " value="{{app.request.get('searchList')}}"/>
+                <input type="submit" value="{{'list.search.action'|trans}}" class="btn-default btn"/>
+            </form>
+        {% endif %}
+    </div>
+</div>
+    
+<div class="table-responsive">
+    
+    <table id="{{ entity ~ '_records' }}" class="table table-bordered table-striped records_list">
+        {% if batchActions is defined %}
+            <caption>
+                <form class="form-inline" id="bachtActionForm">
+                    Actions communes à tous les utilisateurs sélectionnés
+                    <select class="form-control">
+                        {% for key,batchAction in batchActions%}
+                        <option value="{{url(baseRoute ~ batchAction)}}">{{key}}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="btn-default btn">Ok</button>
+                </form>
+            </caption>
+        {% endif %}
+        <thead>
+        <tr>
+            {% if batchActions is defined %}<th></th>{% endif %}
+            <th>{{ knp_pagination_sortable(records, 'Id', entity ~ '.id') }}</th>
+            {% if thumbnailField is defined %}
+                <th>{% trans %}Thumbnail{% endtrans %}</th>
+            {% endif %}
+            {% for fieldName, field in fields %}
+                <th{% if records.isSorted(entity ~ '.' ~ field) %} class="sorted"{% endif %}>{{ knp_pagination_sortable(records, fieldName|trans, entity ~ '.' ~ field) }}</th>
+            {% endfor %}
+            <th>{% trans %}Actions{% endtrans %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for record in records %}
+            
+            {% set RouteParams = { 'id': record.id } %}
+            {% if baseRouteParams is defined %}
+                {% for key, BaseRouteParam in baseRouteParams %}
+                    {% set RouteParams = RouteParams|merge({ (key) : attribute(record, BaseRouteParam) }) %}
+                {% endfor %}
+            {% endif %}
+            
+            {% set baseRouteP = baseRoute%}
+            <tr>
+                 {% if batchActions is defined %}
+                    <td>
+                        <input name="batchActionItem" value="{{ record.id }}" type="checkbox" /> 
+                    </td>
+                 {% endif %}
+                <td>
+                    <a href="{{ path(baseRoute ~ 'edit', RouteParams) }}"> {{ record.id }}</a>
+                </td>
+                
+                {# This if exist only for media#}
+                {% if thumbnailField is defined %}
+                    {% if attribute(record, thumbnailField) is defined %}
+                        <td>
+                            <img src="{{ attribute(record, thumbnailField) }}" width="100"/>
+                        </td>
+                    {% else %}
+                        <td></td>
+                    {% endif %}
+                {% endif %}
+                
+                {% for fieldName, field in fields %}
+                    <td>
+                        {% if attribute(record, field) is iterable %}
+                            {% for subFieldName, subField in attribute(record, field) %}
+                                <p>{{ subField }}</p>
+                            {% endfor %}
+                        {% else %}
+                            {% if attribute(record, field).timestamp is defined %}
+                                {{ attribute(record, field)|date('m/d/Y') }}
+                            {% else %}
+                                {{ attribute(record, field) }}
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endfor %}
+                <td>
+                    {# Actions #}
+                    {% for actionName, action in actions %}
+                        {% if action.tpl is defined %}
+                            {% include action.tpl %} 
+                        {% else %}
+                            {% include "@LCHAdmin/Actions/defaultAction.html.twig" %} 
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="navigation">
+        {{ knp_pagination_render(records) }}
+    </div>
+</div>
