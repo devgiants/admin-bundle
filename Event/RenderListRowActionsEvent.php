@@ -7,14 +7,10 @@
  */
 namespace devgiants\AdminBundle\Event;
 
-use Knp\Component\Pager\Pagination\PaginationInterface;
 use devgiants\AdminBundle\Model\Action;
-use Symfony\Component\EventDispatcher\Event;
-use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class RenderListRowActionsEvent extends Event
+class RenderListRowActionsEvent extends ListEvent
 {
 
     /**
@@ -22,10 +18,6 @@ class RenderListRowActionsEvent extends Event
      */
     private $record;
 
-    /**
-     * @var string the list options
-     */
-    private $options;
     /**
      * @var array[Actions]
      */
@@ -42,8 +34,8 @@ class RenderListRowActionsEvent extends Event
      */
     public function __construct($record, array $options, TokenInterface $token)
     {
+        parent::__construct($options);
         $this->record = $record;
-        $this->options = $options;
         $this->token = $token;
         $this->actions = [];
     }
@@ -117,24 +109,6 @@ class RenderListRowActionsEvent extends Event
     public function setRecord($record)
     {
         $this->record = $record;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $options
-     * @return RenderListRowActionsEvent
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
         return $this;
     }
 }

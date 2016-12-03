@@ -8,22 +8,16 @@
 namespace devgiants\AdminBundle\Event;
 
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-class RenderListEvent extends Event
+class RenderListEvent extends ListEvent
 {
 
     /**
      * @var PaginationInterface The list records
      */
     private $records;
-    /**
-     * @var string the list options
-     */
-    private $options;
+
     /**
      * @var TokenInterface $token
      */
@@ -32,12 +26,14 @@ class RenderListEvent extends Event
     /**
      * @param PaginationInterface $records
      * @param array $options
+     * @param TokenInterface $token
      */
     public function __construct(PaginationInterface $records, array $options, TokenInterface $token)
     {
         $this->records = $records;
-        $this->options = $options;
         $this->token = $token;
+
+        parent::__construct($options);
     }
 
     /**
@@ -63,24 +59,6 @@ class RenderListEvent extends Event
     public function setRecords($records)
     {
         $this->records = $records;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $options
-     * @return RenderListEvent
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
         return $this;
     }
 }

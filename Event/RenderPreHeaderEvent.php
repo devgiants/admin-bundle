@@ -8,21 +8,15 @@
 namespace devgiants\AdminBundle\Event;
 
 use Knp\Component\Pager\Pagination\PaginationInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 
-class RenderPreHeaderEvent extends Event
+class RenderPreHeaderEvent extends ListEvent
 {
 
     /**
      * @var PaginationInterface The list records
      */
     private $records;
-    /**
-     * @var string the list options
-     */
-    private $options;
+
     /**
      * @var string the HTML output to display before list
      */
@@ -34,8 +28,8 @@ class RenderPreHeaderEvent extends Event
      */
     public function __construct(PaginationInterface $records, array $options)
     {
+        parent::__construct($options);
         $this->records = $records;
-        $this->options = $options;
     }
 
     /**
@@ -71,24 +65,6 @@ class RenderPreHeaderEvent extends Event
     public function setRecords($records)
     {
         $this->records = $records;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $options
-     * @return RenderListEvent
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
         return $this;
     }
 

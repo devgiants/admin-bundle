@@ -7,23 +7,14 @@
  */
 namespace devgiants\AdminBundle\Event;
 
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 
-class RenderListRowEvent extends Event
+class RenderListRowEvent extends ListEvent
 {
 
     /**
      * @var mixed one list record
      */
     private $record;
-
-    /**
-     * @var string the list options
-     */
-    private $options;
 
 
     /**
@@ -32,8 +23,9 @@ class RenderListRowEvent extends Event
      */
     public function __construct($record, array $options)
     {
+        parent::__construct($options);
+
         $this->record = $record;
-        $this->options = $options;
     }
 
     /**
@@ -51,24 +43,6 @@ class RenderListRowEvent extends Event
     public function setRecord($record)
     {
         $this->record = $record;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $options
-     * @return RenderListRowEvent
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
         return $this;
     }
 }

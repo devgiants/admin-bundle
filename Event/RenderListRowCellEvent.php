@@ -7,45 +7,54 @@
  */
 namespace devgiants\AdminBundle\Event;
 
-use Knp\Component\Pager\Pagination\PaginationInterface;
-use Symfony\Component\EventDispatcher\Event;
-use Knp\Menu\FactoryInterface;
-use Knp\Menu\ItemInterface;
 
-class RenderListRowCellEvent extends Event
+class RenderListRowCellEvent extends ListEvent
 {
 
     /**
-     * @var mixed one list record
+     * @var mixed one list record (any entity)
      */
     private $record;
 
     /**
-     * @var string $field
+     * @var string $field the field name
      */
     private $field;
 
     /**
-     * @var string $value
+     * @var array $fieldConfiguration the field configuration
      */
-    private $value;
-    /**
-     * @var string the list options
-     */
-    private $options;
+    private $fieldConfiguration;
 
     /**
-     * @param mixed $record
-     * @param string $field
-     * @param string $value
-     * @param array $options
+     * @var string $value the field initial value
      */
-    public function __construct($record, $field, $value, array $options)
+
+    private $value;
+
+    /**
+     * @param mixed $record the record (any entity)
+     * @param string $field the field name
+     * @param array $fieldConfiguration the field configuration
+     * @param string $value the field initial value
+     * @param array $options list options
+     */
+    public function __construct($record, $field, array $fieldConfiguration, $value, array $options)
     {
+        parent::__construct($options);
+
         $this->record = $record;
         $this->field = $field;
+        $this->fieldConfiguration = $fieldConfiguration;
         $this->value = $value;
-        $this->options = $options;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFieldConfiguration()
+    {
+        return $this->fieldConfiguration;
     }
 
     /**
@@ -56,15 +65,6 @@ class RenderListRowCellEvent extends Event
         return $this->record;
     }
 
-    /**
-     * @param mixed $record
-     * @return RenderListRowCellEvent
-     */
-    public function setRecord($record)
-    {
-        $this->record = $record;
-        return $this;
-    }
 
     /**
      * @return string
@@ -72,16 +72,6 @@ class RenderListRowCellEvent extends Event
     public function getField()
     {
         return $this->field;
-    }
-
-    /**
-     * @param string $field
-     * @return RenderListRowCellEvent
-     */
-    public function setField($field)
-    {
-        $this->field = $field;
-        return $this;
     }
 
     /**
@@ -99,24 +89,6 @@ class RenderListRowCellEvent extends Event
     public function setValue($value)
     {
         $this->value = $value;
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getOptions()
-    {
-        return $this->options;
-    }
-
-    /**
-     * @param string $options
-     * @return RenderListRowCellEvent
-     */
-    public function setOptions($options)
-    {
-        $this->options = $options;
         return $this;
     }
 }
