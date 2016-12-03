@@ -14,13 +14,10 @@ use devgiants\AdminBundle\Event\RenderListRowCellEvent;
 use devgiants\AdminBundle\Event\RenderListRowEvent;
 use devgiants\AdminBundle\Event\RenderPreHeaderEvent;
 use devgiants\AdminBundle\Exception\MissingOptionException;
-use Symfony\Component\Config\Definition\Exception\Exception;
-use Symfony\Component\DependencyInjection\Container;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Debug\TraceableEventDispatcher;
 use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -212,7 +209,6 @@ class AdminExtension extends \Twig_Extension
      */
     public function renderCell($record, $field, $value, array $options) {
 
-
         $cellEvent = new RenderListRowCellEvent($record, $field, $value, $options);
         // Dispatch render list row cell event
         $this->dispatcher->dispatch(
@@ -265,7 +261,7 @@ class AdminExtension extends \Twig_Extension
         // Dispatch render list row cell event
         $actionEvent = new RenderListRowActionsEvent($record, $options, $this->tokenStorage->getToken());
         $this->dispatcher->dispatch(
-            AdminEvents::RENDER_ACTIONS_PREFIX . strtoupper($options['entity']['name']), $actionEvent
+            AdminEvents::RENDER_ACTIONS_PREFIX . $options['entity']['name'], $actionEvent
         );
 
         return $this->twig->render("devgiantsAdminBundle:List:actions.html.twig", ['record' => $record, "options" => $options, 'actions' => $actionEvent->getActions()]);
