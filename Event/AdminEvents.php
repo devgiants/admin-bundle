@@ -19,6 +19,7 @@ final class AdminEvents {
     const RENDER_PRE_HEADER_PREFIX = "admin.render.pre.header.";
     const RENDER_HEADER_PREFIX = "admin.render.list.header.";
     const RENDER_ROW_PREFIX = "admin.render.list.row.";
+    const RENDER_ROW_STATE_PREFIX = "admin.render.list.row.state.";
     const RENDER_CELL_PREFIX = "admin.render.list.cell.";
     const RENDER_ACTIONS_PREFIX = "admin.render.list.row.actions.";
     const RENDER_LIST_AFTER_PREFIX = "admin.render.list.after.";

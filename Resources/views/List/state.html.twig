@@ -1,0 +1,5 @@
+{% if fieldParams.logic is not defined or (fieldParams.logic is defined and fieldParams.logic == true) %}
+    <span class='label label-{{ stateValue ? 'success' : 'danger' }}'>{{ fieldParams.active_label|trans() }}</span>
+{% else %}
+    <span class='label label-{{ stateValue ? 'danger' : 'success' }}'>{{ stateValue|trans() }}</span>
+{% endif %}

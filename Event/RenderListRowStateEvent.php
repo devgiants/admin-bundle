@@ -8,7 +8,7 @@
 namespace devgiants\AdminBundle\Event;
 
 
-class RenderListRowCellEvent extends ListEvent
+class RenderListRowStateEvent extends ListEvent
 {
 
     /**
@@ -27,34 +27,36 @@ class RenderListRowCellEvent extends ListEvent
     private $fieldConfiguration;
 
     /**
-     * @var string $value the field initial value
-     */
-
-    private $value;
-
-    /**
      * @param mixed $record the record (any entity)
      * @param string $field the field name
      * @param array $fieldConfiguration the field configuration
-     * @param string $stateValue the field initial value
      * @param array $options list options
      */
-    public function __construct($record, $field, array $fieldConfiguration, $stateValue, array $options)
+    public function __construct($record, $field, array $fieldConfiguration, array $options)
     {
         parent::__construct($options);
 
         $this->record = $record;
         $this->field = $field;
         $this->fieldConfiguration = $fieldConfiguration;
-        $this->value = $stateValue;
     }
-
+    
     /**
      * @return array
      */
     public function getFieldConfiguration()
     {
         return $this->fieldConfiguration;
+    }
+
+    /**
+     * @param array $fieldConfiguration
+     * @return RenderListRowStateEvent
+     */
+    public function setFieldConfiguration($fieldConfiguration)
+    {
+        $this->fieldConfiguration = $fieldConfiguration;
+        return $this;
     }
 
     /**
@@ -72,23 +74,5 @@ class RenderListRowCellEvent extends ListEvent
     public function getField()
     {
         return $this->field;
-    }
-
-    /**
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
-     * @param string $value
-     * @return RenderListRowCellEvent
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-        return $this;
     }
 }
